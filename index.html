@@ -52,11 +52,12 @@ footer{text-align:center;color:#728198;font-size:10px;padding:0 8px 12px;line-he
 <section id="chat" aria-live="polite"><div class="welcome" id="welcome"><div class="big">Guten Tag, Kian.</div><p>Persönlicher KI-Assistent · Sprachsysteme bereit · Warte auf Eingabe.</p></div></section>
 <div class="composer"><form id="form"><textarea id="prompt" rows="1" placeholder="Nachricht an JARVIS…" aria-label="Nachricht an JARVIS"></textarea><button id="send" type="submit" aria-label="Nachricht senden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></form></div>
 <div class="tools"><button id="load">⚡ KI vorbereiten</button><button id="voice">🎙 Gespräch starten</button><button id="speak">🔊 Ton aktivieren</button><button id="clear">Chat leeren</button></div>
-<footer>Für schnellere Antworten nutze ich einen kürzeren Gesprächskontext und kompaktere Antworten. Beim ersten Start wird das KI-Modell einmalig heruntergeladen. Danach läuft die Antworterzeugung lokal auf deinem Gerät. Antworten werden automatisch vorgelesen. Die Geschwindigkeit hängt von iPhone und Browser ab.</footer>
+<footer>JARVIS kann eine Online-KI über einen geschützten Cloudflare-Worker nutzen. Bis diese Verbindung eingerichtet ist, bleibt die lokale KI als Fallback verfügbar. Antworten können vorgelesen werden.</footer>
 </main>
 <script type="module">
 const chat=document.querySelector('#chat'),form=document.querySelector('#form'),input=document.querySelector('#prompt');
 const statusEl=document.querySelector('#status'),stateEl=document.querySelector('#state'),loadBtn=document.querySelector('#load'),sendBtn=document.querySelector('#send');
+const WORKER_URL=''; // Nach dem Worker-Deploy hier die /api/chat-URL eintragen.
 const MODEL='Qwen2.5-0.5B-Instruct-q4f16_1-MLC';
 let engine=null,loading=null,last='',history=[],voiceMode=false,recognition=null,busy=false,audioEnabled=false;
 function status(t){statusEl.textContent=t}
@@ -136,10 +137,20 @@ form.addEventListener('submit',async e=>{
  }
  const bubble=add('JARVIS denkt …');let answer='';
  try{
-  const ai=await loadAI();history.push({role:'user',content:q});
+  history.push({role:'user',content:q});
   const messages=[{role:'system',content:'Du bist JARVIS, Kians persönlicher, intelligenter und höflicher Assistent. Antworte IMMER auf Deutsch, auch wenn die Eingabe Englisch ist. Keine englischen Begrüßungen oder Floskeln. Sprich den Nutzer gelegentlich mit Kian an, aber nicht in jedem Satz. Wiederhole keine Begrüßung und frage nicht ständig „Was kann ich für dich tun?“ oder Ähnliches. Beantworte die konkrete Nachricht direkt und hänge nicht automatisch eine Rückfrage oder ein Hilfsangebot an. Verstehe zuerst die eigentliche Frage und beantworte sie direkt. Erkläre schwierige Dinge in klaren Schritten und gib bei praktischen Fragen konkrete, hilfreiche Vorschläge. Wenn Informationen fehlen, stelle genau eine kurze Rückfrage. Erfinde keine Fakten, Fähigkeiten oder Ergebnisse; sage offen, wenn du etwas nicht weißt. Bei Code: liefere funktionierende, gut erklärte Beispiele. Sei aufmerksam, lösungsorientiert, höflich und gelegentlich trocken-humorvoll. Halte Antworten normalerweise kompakt, aber lasse wichtige Einzelheiten nicht weg. Nenne dich JARVIS.'},...history.slice(-4)];
-  const stream=await ai.chat.completions.create({messages,temperature:0.45,max_tokens:120,stream:true});
-  for await(const chunk of stream){const piece=chunk.choices?.[0]?.delta?.content||'';if(piece){answer+=piece;bubble.textContent=answer;chat.scrollTop=chat.scrollHeight;}}
+  if(WORKER_URL){
+   status('JARVIS verbindet sich mit der Online-KI …');
+   const response=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages})});
+   const data=await response.json();
+   if(!response.ok)throw new Error(data.error||'Online-KI nicht erreichbar.');
+   answer=data.answer||'Ich konnte keine Antwort erzeugen.';
+   bubble.textContent=answer;
+  }else{
+   const ai=await loadAI();
+   const stream=await ai.chat.completions.create({messages,temperature:0.45,max_tokens:180,stream:true});
+   for await(const chunk of stream){const piece=chunk.choices?.[0]?.delta?.content||'';if(piece){answer+=piece;bubble.textContent=answer;chat.scrollTop=chat.scrollHeight;}}
+  }
   answer=answer.trim()||'Einen Moment bitte. Ich konnte keine Antwort erzeugen.';bubble.textContent=answer;
   history.push({role:'assistant',content:answer});history=history.slice(-6);last=answer;status('Bereit für Ihre nächste Anfrage.');if(audioEnabled||voiceMode)speakAnswer(answer);else status('Antwort bereit. Tippe auf „Ton aktivieren“, um JARVIS zu hören.');
  }catch(err){bubble.textContent='Die lokale KI ist gerade nicht verfügbar. Prüfe die Internetverbindung und ob dein Browser WebGPU unterstützt.';status(err?.message||'KI nicht verfügbar.');}
