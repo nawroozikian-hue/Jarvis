@@ -43,6 +43,45 @@ footer{text-align:center;color:#728198;font-size:10px;padding:0 8px 12px;line-he
 @keyframes spin{to{transform:rotate(360deg)}}@keyframes corebeat{0%,100%{transform:scale(.94);filter:brightness(.9)}50%{transform:scale(1.08);filter:brightness(1.25)}}
 @media(max-width:520px){.reactor-stage{height:155px;flex-basis:155px}.reactor{transform:scale(.86)}}
 @media(prefers-reduced-motion:reduce){.reactor:before,.reactor:after,.core{animation:none}}
+
+/* STARK-INSPIRED HOLOGRAPHIC HUD */
+:root{--cyan:#65eaff;--amber:#ff9b45;--line:#31516a}
+body{background:radial-gradient(ellipse at 50% -18%,#174b63 0,transparent 42%),radial-gradient(ellipse at 88% 72%,#4a291a22,transparent 32%),linear-gradient(135deg,#050910,#0b1421 52%,#100e12)}
+header{border-bottom-color:#ffad5528}
+.logo{border-radius:50%;border-color:#ffad5599;color:#ffe0b5;background:radial-gradient(circle,#28556a,#101c2a 70%);box-shadow:0 0 18px #ff9b4533,0 0 28px #62d9e822,inset 0 0 15px #ff9b4520}
+.brand{text-shadow:0 0 15px #ff9b4540}
+.sub{color:#c29c7b}
+.online .dot{background:#ffad55;box-shadow:0 0 10px #ff9b45}
+#status{border-color:#ffad5528;background:linear-gradient(90deg,#173348aa,#251a19aa);box-shadow:inset 3px 0 #ff9b45}
+.reactor-stage{background:radial-gradient(ellipse at center,#123d55aa,transparent 65%)}
+.reactor:after{border-color:#ffad5555;border-top-color:#ffe0b5}
+.core{background:radial-gradient(circle,#fff8e8 0,#ffd49b 12%,#62eaff 32%,#1686b9 59%,#10263c 73%);box-shadow:0 0 14px #ffe0b5,0 0 34px #4ad5f2,0 0 68px #ff9b4555}
+.reactor-label{color:#f4bd87;text-shadow:0 0 12px #ff9b45}
+.welcome{border-color:#ffad5533;background:linear-gradient(145deg,#142b3dcc,#171a22cc);box-shadow:0 18px 70px #0007,inset 0 1px #ffcf8b18}
+.welcome:before{background:linear-gradient(90deg,transparent,#ffad55,#72e8f5,transparent)}
+.composer{border-color:#53748a;box-shadow:0 12px 45px #0007,0 0 25px #ff9b4510}
+#send{background:linear-gradient(145deg,#ffe0b5,#ff9b45);box-shadow:0 5px 18px #ff9b4540}
+.tools button{border-color:#43586a;background:linear-gradient(145deg,#1b2c3c,#171b23)}
+.tools button:hover{border-color:#ffad55;color:#ffe1c0}
+#memory{border-color:#c17c43;color:#ffd2a0;background:linear-gradient(145deg,#49301f,#20232a);box-shadow:0 0 18px #ff9b4518}
+#memoryPanel{position:fixed;inset:0;z-index:20;background:#02060cdd;backdrop-filter:blur(14px);display:grid;place-items:center;padding:18px}
+.memory-window{width:min(680px,100%);max-height:min(82dvh,760px);display:flex;flex-direction:column;border:1px solid #6c9aaf;border-radius:22px;padding:20px;background:linear-gradient(145deg,#122638f5,#0a111cf7 65%,#21170ff5);box-shadow:0 0 0 1px #ffad5520,0 25px 90px #000b,0 0 38px #38d9ff16}
+.memory-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;border-bottom:1px solid #ffad5540;padding-bottom:14px}
+.memory-kicker{font-size:9px;letter-spacing:2.2px;color:#ffb46f}
+.memory-head h2{margin:6px 0 2px;font-size:22px;letter-spacing:3px;color:#e8faff;text-shadow:0 0 18px #65eaff55}
+.memory-head p{margin:0;color:#92aabd;font-size:12px}
+.memory-close{width:34px;height:34px;border:1px solid #526d7d;border-radius:10px;color:#f4c18f;background:#172637;font-size:22px}
+.memory-search{margin:15px 0 10px;width:100%;padding:12px 14px;border-radius:12px;border:1px solid #477084;background:#081522;color:#eafaff;outline:none;font:14px inherit}
+.memory-search:focus{border-color:#65eaff;box-shadow:0 0 15px #65eaff22}
+.memory-results{overflow:auto;min-height:100px;padding-right:4px}
+.memory-section{font-size:9px;letter-spacing:2px;color:#ffb46f;margin:13px 0 7px}
+.memory-entry{font-size:12px;line-height:1.5;color:#c5d8e5;padding:10px 11px;margin:6px 0;border:1px solid #345267;border-left:2px solid #65dff0;border-radius:9px;background:#122335aa;overflow-wrap:anywhere}
+.memory-empty{padding:30px 10px;text-align:center;color:#91a7b8;font-size:13px}
+.memory-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.memory-actions button{padding:9px 12px;border-radius:10px;border:1px solid #a36d43;background:#30251e;color:#ffd3a6;font-size:11px}
+.memory-actions .memory-delete{border-color:#784a4a;color:#ffb6a9;background:#291b20}
+.memory-note{font-size:10px;color:#8197a9;margin-top:12px;text-align:center}
+
 </style>
 </head>
 <body><main class="app">
@@ -51,7 +90,7 @@ footer{text-align:center;color:#728198;font-size:10px;padding:0 8px 12px;line-he
 <div class="reactor-stage" aria-label="Animierter JARVIS-Reaktorkern"><span class="hud-tick one"></span><span class="hud-tick two"></span><span class="hud-tick three"></span><div class="reactor"><div class="orbit"></div><div class="core"></div></div><div class="reactor-label">J.A.R.V.I.S. · ONLINE SYSTEM</div></div>
 <section id="chat" aria-live="polite"><div class="welcome" id="welcome"><div class="big">Guten Tag, Kian.</div><p>Persönlicher KI-Assistent · Sprachsysteme bereit · Warte auf Eingabe.</p></div></section>
 <div class="composer"><form id="form"><textarea id="prompt" rows="1" placeholder="Nachricht an JARVIS…" aria-label="Nachricht an JARVIS"></textarea><button id="send" type="submit" aria-label="Nachricht senden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></form></div>
-<div class="tools"><button id="load">⚡ KI vorbereiten</button><button id="voice">🎙 Gespräch starten</button><button id="speak">🔊 Ton aktivieren</button><button id="memory">🧠 Gedächtnis</button><button id="clear">Chat leeren</button></div>
+<div class="tools"><button id="load">⚡ KI vorbereiten</button><button id="voice">🎙 Gespräch starten</button><button id="speak">🔊 Ton aktivieren</button><button id="memory">◈ MEMORY CORE</button><button id="clear">Chat leeren</button></div>
 <footer>Online-KI: Cloudflare Workers AI (Gratis-Kontingent). Sobald die Worker-URL eingetragen ist, nutzt JARVIS das Online-Modell. Bis dahin bleibt die lokale KI verfügbar. Antworten können vorgelesen werden.</footer>
 </main>
 <script type="module">
@@ -137,7 +176,7 @@ form.addEventListener('submit',async e=>{
  }
  const bubble=add('JARVIS denkt …');let answer='';
  try{
-  history.push({role:'user',content:q});
+  history.push({role:'user',content:q});rememberMessage('user',q);
   const messages=[{role:'system',content:'Du bist JARVIS, Kians persönlicher, intelligenter und höflicher Assistent. Antworte IMMER auf Deutsch, auch wenn die Eingabe Englisch ist. Keine englischen Begrüßungen oder Floskeln. Sprich den Nutzer gelegentlich mit Kian an, aber nicht in jedem Satz. Wiederhole keine Begrüßung und frage nicht ständig „Was kann ich für dich tun?“ oder Ähnliches. Beantworte die konkrete Nachricht direkt und hänge nicht automatisch eine Rückfrage oder ein Hilfsangebot an. Verstehe zuerst die eigentliche Frage und beantworte sie direkt. Erkläre schwierige Dinge in klaren Schritten und gib bei praktischen Fragen konkrete, hilfreiche Vorschläge. Wenn Informationen fehlen, stelle genau eine kurze Rückfrage. Erfinde keine Fakten, Fähigkeiten oder Ergebnisse; sage offen, wenn du etwas nicht weißt. Bei Code: liefere funktionierende, gut erklärte Beispiele. Sei aufmerksam, lösungsorientiert, höflich und gelegentlich trocken-humorvoll. Halte Antworten normalerweise kompakt, aber lasse wichtige Einzelheiten nicht weg. Nenne dich JARVIS. Nutze gespeicherte Angaben, wenn sie zur Frage passen. Behaupte niemals, du würdest dich an etwas erinnern, das nicht im Gedächtnis steht. Wenn der Nutzer eine Information dauerhaft speichern möchte, fordere ihn auf, „Merke dir: …“ zu verwenden.'+memoryText()},...history.slice(-4)];
   if(WORKER_URL){
    status('JARVIS verbindet sich mit der Online-KI …');
@@ -152,7 +191,7 @@ form.addEventListener('submit',async e=>{
    for await(const chunk of stream){const piece=chunk.choices?.[0]?.delta?.content||'';if(piece){answer+=piece;bubble.textContent=answer;chat.scrollTop=chat.scrollHeight;}}
   }
   answer=answer.trim()||'Einen Moment bitte. Ich konnte keine Antwort erzeugen.';bubble.textContent=answer;
-  history.push({role:'assistant',content:answer});history=history.slice(-6);last=answer;status('Bereit für Ihre nächste Anfrage.');if(audioEnabled||voiceMode)speakAnswer(answer);else status('Antwort bereit. Tippe auf „Ton aktivieren“, um JARVIS zu hören.');
+  history.push({role:'assistant',content:answer});rememberMessage('assistant',answer);history=history.slice(-6);last=answer;status('Bereit für Ihre nächste Anfrage.');if(audioEnabled||voiceMode)speakAnswer(answer);else status('Antwort bereit. Tippe auf „Ton aktivieren“, um JARVIS zu hören.');
  }catch(err){bubble.textContent=WORKER_URL?'Die Online-KI ist gerade nicht erreichbar. Prüfe die Worker-Einrichtung oder versuche es später erneut.':'Die lokale KI ist gerade nicht verfügbar. Prüfe die Internetverbindung und ob dein Browser WebGPU unterstützt.';status(err?.message||'KI nicht verfügbar.');}
  finally{sendBtn.disabled=false;busy=false;if(!voiceMode)input.focus();else if(!speechSynthesis.speaking&&!recognition)startListening();}
 });
