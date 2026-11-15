@@ -110,10 +110,10 @@ function findOldContext(query){const words=(query.toLowerCase().match(/[a-zäö�
 function memoryText(){const items=readMemory();return items.length?'\\n\\nVom Nutzer ausdrücklich gespeicherte Informationen (lokal auf diesem Gerät):\\n'+items.map(x=>'• '+x).join('\\n'):'\\n\\nEs sind noch keine persönlichen Informationen gespeichert.';}
 function timeCommand(query){
  const q=query.toLocaleLowerCase('de-DE');
- if(!/(wie\\s*(viel\\s*)?(uhr|spät)|genaue\\s*uhrzeit|aktuelle\\s*uhrzeit|uhrzeit\\s*jetzt)/i.test(q))return null;
+ if(!/(wie\s*(viel\s*)?(uhr|spät)|genaue\s*uhrzeit|aktuelle\s*uhrzeit|uhrzeit\s*jetzt)/i.test(q))return null;
  const zones=[
   [/new york|new york city|nyc/,'New York','America/New_York'],
-  [/los angeles|la\\b|kalifornien/,'Los Angeles','America/Los_Angeles'],
+  [/los angeles|la\b|kalifornien/,'Los Angeles','America/Los_Angeles'],
   [/chicago/,'Chicago','America/Chicago'],
   [/london/,'London','Europe/London'],
   [/paris/,'Paris','Europe/Paris'],
@@ -203,7 +203,11 @@ function startListening(){
 form.addEventListener('submit',async e=>{
  e.preventDefault();const q=input.value.trim();if(!q)return;
  add(q,'user');input.value='';input.style.height='auto';sendBtn.disabled=true;busy=true;if(recognition){try{recognition.stop()}catch(e){}}
- const exactTime=timeCommand(q);\n if(exactTime){\n  const reply=add(exactTime);history.push({role:'user',content:q},{role:'assistant',content:exactTime});rememberMessage('user',q);rememberMessage('assistant',exactTime);history=history.slice(-6);last=exactTime;status('Uhrzeit direkt aus der Zeitzone berechnet.');sendBtn.disabled=false;busy=false;if(audioEnabled||voiceMode)speakAnswer(exactTime);else input.focus();return;\n }\n const media=mediaCommand(q);
+ const exactTime=timeCommand(q);
+ if(exactTime){
+  const reply=add(exactTime);history.push({role:'user',content:q},{role:'assistant',content:exactTime});rememberMessage('user',q);rememberMessage('assistant',exactTime);history=history.slice(-6);last=exactTime;status('Uhrzeit direkt aus der Zeitzone berechnet.');sendBtn.disabled=false;busy=false;if(audioEnabled||voiceMode)speakAnswer(exactTime);else input.focus();return;
+ }
+ const media=mediaCommand(q);
  if(media){
   const reply=add(media.message);
   if(media.url)addMediaLink(reply,media.url,media.label);
