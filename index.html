@@ -51,14 +51,14 @@ footer{text-align:center;color:#728198;font-size:10px;padding:0 8px 12px;line-he
 <div class="reactor-stage" aria-label="Animierter JARVIS-Reaktorkern"><span class="hud-tick one"></span><span class="hud-tick two"></span><span class="hud-tick three"></span><div class="reactor"><div class="orbit"></div><div class="core"></div></div><div class="reactor-label">J.A.R.V.I.S. · ONLINE SYSTEM</div></div>
 <section id="chat" aria-live="polite"><div class="welcome" id="welcome"><div class="big">Guten Tag, Kian.</div><p>Persönlicher KI-Assistent · Sprachsysteme bereit · Warte auf Eingabe.</p></div></section>
 <div class="composer"><form id="form"><textarea id="prompt" rows="1" placeholder="Nachricht an JARVIS…" aria-label="Nachricht an JARVIS"></textarea><button id="send" type="submit" aria-label="Nachricht senden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></form></div>
-<div class="tools"><button id="load">⚡ KI vorbereiten</button><button id="voice">🎙 Gespräch starten</button><button id="speak">🔊 Vorlesen</button><button id="clear">Chat leeren</button></div>
+<div class="tools"><button id="load">⚡ KI vorbereiten</button><button id="voice">🎙 Gespräch starten</button><button id="speak">🔊 Ton aktivieren</button><button id="clear">Chat leeren</button></div>
 <footer>Für schnellere Antworten nutze ich einen kürzeren Gesprächskontext und kompaktere Antworten. Beim ersten Start wird das KI-Modell einmalig heruntergeladen. Danach läuft die Antworterzeugung lokal auf deinem Gerät. Antworten werden automatisch vorgelesen. Die Geschwindigkeit hängt von iPhone und Browser ab.</footer>
 </main>
 <script type="module">
 const chat=document.querySelector('#chat'),form=document.querySelector('#form'),input=document.querySelector('#prompt');
 const statusEl=document.querySelector('#status'),stateEl=document.querySelector('#state'),loadBtn=document.querySelector('#load'),sendBtn=document.querySelector('#send');
 const MODEL='Qwen2.5-0.5B-Instruct-q4f16_1-MLC';
-let engine=null,loading=null,last='',history=[],voiceMode=false,recognition=null,busy=false;
+let engine=null,loading=null,last='',history=[],voiceMode=false,recognition=null,busy=false,audioEnabled=false;
 function status(t){statusEl.textContent=t}
 function add(text,who='bot'){
  document.querySelector('#welcome')?.remove();
@@ -99,7 +99,8 @@ async function loadAI(){
 }
 loadBtn.addEventListener('click',()=>loadAI().catch(()=>{}));
 function speakAnswer(text){
- if(!('speechSynthesis'in window))return;
+ if(!('speechSynthesis'in window)){status('Dieser Browser unterstützt keine Sprachausgabe.');return;}
+ if(!audioEnabled){status('Tippe zuerst auf „Ton aktivieren“, damit dein Browser Audio freigibt.');return;}
  speechSynthesis.cancel();
  const u=new SpeechSynthesisUtterance(text);u.lang='de-DE';u.rate=0.92;u.pitch=0.86;
  const voices=speechSynthesis.getVoices();const german=voices.find(v=>v.lang?.toLowerCase().startsWith('de'));
@@ -129,8 +130,8 @@ form.addEventListener('submit',async e=>{
   const reply=add(media.message);
   if(media.url)addMediaLink(reply,media.url,media.label);
   last=media.message;status('Medienbefehl erkannt.');sendBtn.disabled=false;busy=false;
-  if(voiceMode)speakAnswer(media.message);
-  else input.focus();
+  if(audioEnabled||voiceMode)speakAnswer(media.message);
+  else {status('Antwort bereit. Tippe auf „Ton aktivieren“, um JARVIS zu hören.');input.focus();}
   return;
  }
  const bubble=add('JARVIS denkt …');let answer='';
@@ -140,19 +141,19 @@ form.addEventListener('submit',async e=>{
   const stream=await ai.chat.completions.create({messages,temperature:0.45,max_tokens:120,stream:true});
   for await(const chunk of stream){const piece=chunk.choices?.[0]?.delta?.content||'';if(piece){answer+=piece;bubble.textContent=answer;chat.scrollTop=chat.scrollHeight;}}
   answer=answer.trim()||'Einen Moment bitte. Ich konnte keine Antwort erzeugen.';bubble.textContent=answer;
-  history.push({role:'assistant',content:answer});history=history.slice(-6);last=answer;status('Bereit für Ihre nächste Anfrage.');speakAnswer(answer);
+  history.push({role:'assistant',content:answer});history=history.slice(-6);last=answer;status('Bereit für Ihre nächste Anfrage.');if(audioEnabled||voiceMode)speakAnswer(answer);else status('Antwort bereit. Tippe auf „Ton aktivieren“, um JARVIS zu hören.');
  }catch(err){bubble.textContent='Die lokale KI ist gerade nicht verfügbar. Prüfe die Internetverbindung und ob dein Browser WebGPU unterstützt.';status(err?.message||'KI nicht verfügbar.');}
  finally{sendBtn.disabled=false;busy=false;if(!voiceMode)input.focus();else if(!speechSynthesis.speaking&&!recognition)startListening();}
 });
 input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px'});
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
-document.querySelector('#speak').onclick=()=>{if(!last){status('Noch keine Antwort zum Vorlesen vorhanden.');return;}speakAnswer(last)};
+document.querySelector('#speak').onclick=()=>{audioEnabled=true;if(!('speechSynthesis'in window)){status('Dieser Browser unterstützt keine Sprachausgabe.');return;}if(last){speakAnswer(last)}else{speakAnswer('Hallo Kian. JARVIS-Sprachausgabe ist jetzt aktiviert.');}};
 document.querySelector('#voice').onclick=()=>{
  const R=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!R){status('Diese Browser-Version unterstützt keine Spracheingabe. Bitte nutze die Texteingabe.');return}
  voiceMode=!voiceMode;const btn=document.querySelector('#voice');btn.classList.toggle('active',voiceMode);
  btn.textContent=voiceMode?'⏹ Gespräch beenden':'🎙 Gespräch starten';
- if(voiceMode){status('Freisprechen aktiviert. JARVIS hört dir zu.');startListening()}
+ if(voiceMode){audioEnabled=true;status('Freisprechen aktiviert. JARVIS hört dir zu.');startListening()}
  else{if(recognition){try{recognition.stop()}catch(e){}}speechSynthesis.cancel();stateEl.textContent='BEREIT';status('Freisprechen beendet.')}
 };
 document.querySelector('#clear').onclick=()=>{chat.replaceChildren();history=[];last='';add('Der Chat ist zurückgesetzt. Ich bin bereit.');};
