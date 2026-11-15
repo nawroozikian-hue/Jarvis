@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071426">
+<meta name="description" content="JARVIS – dein persönlicher KI-Assistent im Sci-Fi-Stil.">
+<link rel="manifest" href="manifest.webmanifest">
+<title>J.A.R.V.I.S.</title>
+<style>
+:root{color-scheme:dark;--bg:#06101f;--panel:#0c1d32;--cyan:#5ce1e6;--muted:#91a8bd}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#12304b 0,#06101f 55%);color:#eaf8ff;font:16px system-ui,-apple-system,sans-serif;display:grid;place-items:center;padding:18px}
+main{width:min(720px,100%);border:1px solid #24516a;border-radius:24px;background:#071426eF;box-shadow:0 20px 80px #0009;overflow:hidden}
+header{text-align:center;padding:28px 20px 18px;border-bottom:1px solid #1d4059}
+.orb{width:86px;height:86px;border:2px solid var(--cyan);border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;box-shadow:0 0 28px #5ce1e655,inset 0 0 22px #5ce1e622;color:var(--cyan);font-size:25px;letter-spacing:2px}
+h1{margin:0;letter-spacing:7px;font-size:25px;color:var(--cyan)}header p{margin:8px 0 0;color:var(--muted);font-size:13px;letter-spacing:2px}
+#chat{height:min(48vh,430px);min-height:250px;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+.msg{padding:12px 15px;border-radius:16px;max-width:88%;line-height:1.5;white-space:pre-wrap}.bot{background:#102941;border:1px solid #1c4964;align-self:flex-start}.user{background:#123e50;border:1px solid #27748a;align-self:flex-end}
+form{display:flex;gap:9px;padding:14px;border-top:1px solid #1d4059}input{min-width:0;flex:1;background:#081a2c;border:1px solid #28516b;border-radius:13px;padding:14px;color:white;font:inherit;outline:none}button{border:1px solid #3aaab7;background:#10394a;color:#dffcff;border-radius:13px;padding:12px 15px;font:inherit;cursor:pointer}button:active{transform:scale(.98)}.tools{display:flex;gap:8px;justify-content:center;padding:0 14px 16px;flex-wrap:wrap}.tools button{font-size:13px;color:var(--muted);border-color:#24465e;background:#0a1c2d}
+footer{text-align:center;color:#6f8ba3;font-size:11px;padding:0 15px 16px}
+</style>
+</head>
+<body>
+<main>
+<header><div class="orb">J</div><h1>J.A.R.V.I.S.</h1><p>JUST A RATHER VERY INTELLIGENT SYSTEM</p></header>
+<section id="chat" aria-live="polite"><div class="msg bot">Guten Tag. Ich bin JARVIS – deine Web-Assistenten-Demo. Was kann ich für dich tun?</div></section>
+<form id="form"><input id="prompt" autocomplete="off" placeholder="Nachricht an JARVIS…" aria-label="Nachricht"><button type="submit">Senden</button></form>
+<div class="tools"><button id="speak">🔊 Antwort vorlesen</button><button id="voice">🎙️ Spracheingabe</button><button id="clear">Chat leeren</button></div>
+<footer>Demo-Version · Antworten sind noch nicht mit einer echten KI verbunden.</footer>
+</main>
+<script>
+const chat=document.querySelector('#chat'),form=document.querySelector('#form'),input=document.querySelector('#prompt');let last='';
+function add(text,who='bot'){const el=document.createElement('div');el.className='msg '+who;el.textContent=text;chat.append(el);chat.scrollTop=chat.scrollHeight;if(who==='bot')last=text}
+function reply(q){const s=q.toLowerCase();if(/hallo|hi|hey|guten/.test(s))return 'Guten Tag! Wie kann ich behilflich sein?';if(/wer bist|dein name/.test(s))return 'Ich bin JARVIS, eine kleine Assistenten-Demo im Stil eines futuristischen Computersystems.';if(/uhrzeit|wie spät/.test(s))return 'Die aktuelle Gerätezeit ist '+new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+'.';if(/datum|welcher tag/.test(s))return 'Heute ist '+new Date().toLocaleDateString('de-DE',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+'.';if(/danke/.test(s))return 'Sehr gern. Ich stehe bereit.';return 'Verstanden. Diese Website ist momentan eine Demo und hat noch keine echte KI-Anbindung. Für intelligente Antworten müsste ein KI-Dienst sicher auf einem Server verbunden werden.'}
+form.addEventListener('submit',e=>{e.preventDefault();const q=input.value.trim();if(!q)return;add(q,'user');input.value='';setTimeout(()=>add(reply(q)),250)});
+document.querySelector('#speak').onclick=()=>{if(!last)return; if(!('speechSynthesis'in window)){add('Sprachausgabe wird von diesem Browser nicht unterstützt.');return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(last);u.lang='de-DE';speechSynthesis.speak(u)};
+document.querySelector('#voice').onclick=()=>{const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){add('Spracheingabe wird in diesem Browser nicht unterstützt.');return}const r=new R();r.lang='de-DE';r.onresult=e=>{input.value=e.results[0][0].transcript;form.requestSubmit()};r.onerror=()=>add('Die Spracheingabe konnte nicht gestartet werden.');r.start()};
+document.querySelector('#clear').onclick=()=>{chat.replaceChildren();add('Chat geleert. Ich bin bereit.');};
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body></html>
