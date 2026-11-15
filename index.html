@@ -67,6 +67,25 @@ function add(text,who='bot'){
  const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=text;
  wrap.append(avatar,bubble);chat.append(wrap);chat.scrollTop=chat.scrollHeight;if(who==='bot')last=text;return bubble;
 }
+function mediaCommand(q){
+ const s=q.trim();
+ const unresolved=/^(spiel|spiele)\\s+(das|dies|diesen|diese)\\s*(ab)?[.!?]*$/i.test(s);
+ if(unresolved)return {message:'Welches Lied oder Video meinst du? Nenne mir bitte den Titel.'};
+ let m=s.match(/^(?:spiel|spiele)\\s+(?:mir\\s+)?(.+?)\\s+ab[.!?]*$/i);
+ if(!m)m=s.match(/^(?:spiel|spiele)\\s+(?:mir\\s+)?(.+?)[.!?]*$/i);
+ if(!m)m=s.match(/^(?:zeig|zeige)\\s+mir\\s+(.+?)(?:\\s+(?:ein\\s+)?video)?[.!?]*$/i);
+ if(!m&&/^(?:öffne|oeffne)\\s+(?:youtube|youtube music)[.!?]*$/i.test(s))m=['','Musik'];
+ if(!m)return null;
+ let term=m[1].trim().replace(/^(?:bitte\\s+)/i,'');
+ if(!term)return {message:'Was soll ich abspielen? Nenne mir einen Song oder ein Video.'};
+ const url='https://www.youtube.com/results?search_query='+encodeURIComponent(term);
+ return {message:'Ich habe eine passende YouTube-Suche vorbereitet: '+term, url, label:'▶ Auf YouTube suchen'};
+}
+function addMediaLink(bubble,url,label){
+ const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=label;
+ link.style.cssText='display:inline-block;margin-top:12px;padding:10px 14px;border:1px solid #62d9e899;border-radius:12px;color:#bdfaff;text-decoration:none;background:#123447;font-weight:650;font-size:13px';
+ bubble.append(document.createElement('br'),link);
+}
 async function loadAI(){
  if(engine)return engine;if(loading)return loading;
  if(!('gpu'in navigator)){status('WebGPU wird in diesem Browser nicht unterstützt.');stateEl.textContent='NICHT VERFÜGBAR';throw Error('WebGPU nicht verfügbar');}
@@ -105,6 +124,15 @@ function startListening(){
 form.addEventListener('submit',async e=>{
  e.preventDefault();const q=input.value.trim();if(!q)return;
  add(q,'user');input.value='';input.style.height='auto';sendBtn.disabled=true;busy=true;if(recognition){try{recognition.stop()}catch(e){}}
+ const media=mediaCommand(q);
+ if(media){
+  const reply=add(media.message);
+  if(media.url)addMediaLink(reply,media.url,media.label);
+  last=media.message;status('Medienbefehl erkannt.');sendBtn.disabled=false;busy=false;
+  if(voiceMode)speakAnswer(media.message);
+  else input.focus();
+  return;
+ }
  const bubble=add('JARVIS denkt …');let answer='';
  try{
   const ai=await loadAI();history.push({role:'user',content:q});
