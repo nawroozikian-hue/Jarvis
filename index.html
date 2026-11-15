@@ -10,23 +10,23 @@
 <style>
 :root{color-scheme:dark;--bg:#090d16;--panel:#111827;--line:#253247;--cyan:#62d9e8;--muted:#91a0b5;--text:#edf3fb}
 *{box-sizing:border-box}
-body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at 50% -20%,#18374b 0,transparent 55%),var(--bg);color:var(--text);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;justify-content:center}
-.app{width:min(860px,100%);min-height:100dvh;display:flex;flex-direction:column;padding:0 18px env(safe-area-inset-bottom)}
-header{height:68px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #ffffff12;flex-shrink:0}
-.logo{width:38px;height:38px;border:1px solid #62d9e888;border-radius:13px;display:grid;place-items:center;color:var(--cyan);font-weight:700;box-shadow:0 0 22px #62d9e81c}
-.brand{font-weight:650;letter-spacing:2px;font-size:14px}.sub{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:1.3px}
+body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at 50% -22%,#1d5268 0,transparent 48%),radial-gradient(circle at 8% 75%,#102d43 0,transparent 30%),linear-gradient(135deg,#070b13,#0b1422 55%,#080e18);color:var(--text);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;justify-content:center;background-attachment:fixed}
+.app{width:min(920px,100%);min-height:100dvh;display:flex;flex-direction:column;padding:0 18px env(safe-area-inset-bottom);position:relative}
+header{height:76px;display:flex;align-items:center;gap:13px;border-bottom:1px solid #8defff20;flex-shrink:0;backdrop-filter:blur(16px)}
+.logo{width:44px;height:44px;border:1px solid #7ceafa99;border-radius:15px;display:grid;place-items:center;color:#b8fbff;font-weight:800;font-size:19px;background:linear-gradient(145deg,#1a5265aa,#102032);box-shadow:0 0 12px #62d9e844,0 0 34px #62d9e81c,inset 0 0 16px #62d9e81c}
+.brand{font-weight:750;letter-spacing:3px;font-size:15px;text-shadow:0 0 18px #62d9e855}.sub{font-size:10px;color:#8ca9bd;margin-top:4px;letter-spacing:1.8px}
 .online{margin-left:auto;display:flex;align-items:center;gap:7px;color:#9cb4c6;font-size:11px}.dot{width:7px;height:7px;border-radius:50%;background:#61d9b0;box-shadow:0 0 10px #61d9b0}
-#status{font-size:12px;color:var(--muted);padding:10px 2px;min-height:34px}
+#status{font-size:12px;color:#9bb5c8;padding:11px 13px;min-height:38px;margin:13px 0 0;border:1px solid #72dff01a;border-radius:12px;background:linear-gradient(90deg,#10283a99,#101b2b66);letter-spacing:.15px}
 #chat{flex:1;overflow:auto;display:flex;flex-direction:column;gap:22px;padding:22px 2px 28px;scroll-behavior:smooth}
-.welcome{margin:auto auto 24px;text-align:center;max-width:470px}.welcome .big{font-size:28px;font-weight:650;letter-spacing:-.7px}.welcome p{color:var(--muted);line-height:1.55;font-size:14px}
+.welcome{margin:auto auto 24px;text-align:center;max-width:520px;padding:30px 24px;border:1px solid #72dff020;border-radius:26px;background:linear-gradient(145deg,#14283a99,#0d172499);box-shadow:0 18px 70px #0004,inset 0 1px #ffffff0c}.welcome:before{content:"";display:block;width:76px;height:2px;margin:0 auto 22px;background:linear-gradient(90deg,transparent,#72e8f5,transparent);box-shadow:0 0 18px #62d9e8}.welcome .big{font-size:clamp(27px,5vw,36px);font-weight:750;letter-spacing:-1px;text-shadow:0 0 28px #62d9e833}.welcome p{color:#a5b8c9;line-height:1.65;font-size:14px}
 .msg{display:flex;gap:11px;max-width:90%;align-items:flex-start;line-height:1.62;white-space:pre-wrap;overflow-wrap:anywhere}.msg.user{align-self:flex-end;flex-direction:row-reverse}.msg.bot{align-self:flex-start}
 .avatar{width:29px;height:29px;flex:0 0 29px;border-radius:10px;display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--cyan);background:#102b38;border:1px solid #285568}
 .user .avatar{color:#d9e4f2;background:#202b3d;border-color:#34445d}
-.bubble{padding:11px 15px;border-radius:17px;background:#131e2d;border:1px solid #ffffff0c;font-size:15px}.user .bubble{background:#203044;border-color:#ffffff12}
-.composer{border:1px solid #344357;background:#111a28;border-radius:20px;padding:9px;box-shadow:0 12px 45px #0005;margin:0 0 12px}
+.bubble{padding:12px 16px;border-radius:6px 18px 18px 18px;background:linear-gradient(145deg,#14283a,#101b2a);border:1px solid #65d9e51c;font-size:15px;box-shadow:0 8px 26px #0002}.user .bubble{background:linear-gradient(145deg,#203a50,#1a2a3d);border-color:#ffffff18;border-radius:18px 6px 18px 18px}
+.composer{border:1px solid #4d7185;background:linear-gradient(145deg,#152536ee,#0d1725f2);border-radius:22px;padding:9px;box-shadow:0 12px 45px #0006,0 0 25px #62d9e80b;margin:0 0 12px}
 form{display:flex;gap:8px;align-items:flex-end}textarea{resize:none;flex:1;min-width:0;max-height:120px;background:transparent;border:0;outline:0;color:var(--text);font:15px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:12px 10px;line-height:1.45}textarea::placeholder{color:#8292a7}
 button{border:0;cursor:pointer;font:inherit}#send{width:46px;height:46px;flex:0 0 46px;border-radius:16px;background:linear-gradient(145deg,#8af2f2,#43b8d1);color:#07131b;display:grid;place-items:center;box-shadow:0 5px 18px #45c9df40;transition:transform .15s,filter .15s}#send:active{transform:scale(.93)}#send:disabled{opacity:.45}#send svg{width:21px;height:21px}
-.tools{display:flex;gap:8px;padding:0 2px 10px;justify-content:center;flex-wrap:wrap}.tools button{font-size:12px;color:#aab8ca;background:#141e2d;border:1px solid #2b3b50;border-radius:10px;padding:8px 11px}
+.tools{display:flex;gap:8px;padding:0 2px 10px;justify-content:center;flex-wrap:wrap}.tools button{font-size:12px;color:#b6c9d9;background:linear-gradient(145deg,#17283a,#111b29);border:1px solid #38536a;border-radius:12px;padding:9px 13px;transition:border-color .2s,transform .2s}.tools button:active{transform:scale(.97)}.tools button:hover{border-color:#68ddeb}
 footer{text-align:center;color:#728198;font-size:10px;padding:0 8px 12px;line-height:1.45}
 .typing{color:var(--muted);font-size:13px;padding:4px 0}
 @media(min-width:700px){.app{padding-left:30px;padding-right:30px}#chat{padding-top:34px}.bubble{font-size:15.5px}}
@@ -71,11 +71,11 @@ form.addEventListener('submit',async e=>{
  const bubble=add('JARVIS denkt …');let answer='';
  try{
   const ai=await loadAI();history.push({role:'user',content:q});
-  const messages=[{role:'system',content:'Du bist JARVIS, Kians persönlicher KI-Assistent. WICHTIGSTE REGEL: Deine gesamte Antwort muss immer auf Deutsch sein. Schreibe niemals englische Sätze, englische Begrüßungen oder englische Floskeln. Auch wenn Kian Englisch schreibt oder ein Begriff auf Englisch erscheint, antworte auf Deutsch. Verwende englische Fachbegriffe nur, wenn es keinen üblichen deutschen Ausdruck gibt, und erkläre sie kurz auf Deutsch. Prüfe vor dem Absenden jede Antwort: Ist sie vollständig Deutsch? Falls nicht, formuliere sie vollständig auf Deutsch um. Sprich Kian immer mit Kian an. Sei höflich, kompetent, aufmerksam und gelegentlich subtil humorvoll. Antworte direkt und verständlich, meistens kurz, bei Bedarf ausführlich. Nenne dich JARVIS. Behaupte niemals, Geräte oder Apps steuern zu können, wenn du es nicht tatsächlich kannst.'},...history.slice(-4)];
-  const stream=await ai.chat.completions.create({messages,temperature:0.55,max_tokens:140,stream:true});
+  messages=[{role:'system',content:'Du bist JARVIS, Kians persönlicher, intelligenter und höflicher Assistent. Antworte IMMER auf Deutsch, auch wenn die Eingabe Englisch ist. Keine englischen Begrüßungen oder Floskeln. Sprich den Nutzer gelegentlich mit Kian an, aber nicht in jedem Satz. Verstehe zuerst die eigentliche Frage und beantworte sie direkt. Erkläre schwierige Dinge in klaren Schritten und gib bei praktischen Fragen konkrete, hilfreiche Vorschläge. Wenn Informationen fehlen, stelle genau eine kurze Rückfrage. Erfinde keine Fakten, Fähigkeiten oder Ergebnisse; sage offen, wenn du etwas nicht weißt. Bei Code: liefere funktionierende, gut erklärte Beispiele. Sei aufmerksam, lösungsorientiert, höflich und gelegentlich trocken-humorvoll. Halte Antworten normalerweise kompakt, aber lasse wichtige Einzelheiten nicht weg. Nenne dich JARVIS.'},...history.slice(-8)];
+  const stream=await ai.chat.completions.create({messages,temperature:0.45,max_tokens:220,stream:true});
   for await(const chunk of stream){const piece=chunk.choices?.[0]?.delta?.content||'';if(piece){answer+=piece;bubble.textContent=answer;chat.scrollTop=chat.scrollHeight;}}
   answer=answer.trim()||'Einen Moment bitte. Ich konnte keine Antwort erzeugen.';bubble.textContent=answer;
-  history.push({role:'assistant',content:answer});history=history.slice(-6);last=answer;status('Bereit für Ihre nächste Anfrage.');
+  history.push({role:'assistant',content:answer});history=history.slice(-10);last=answer;status('Bereit für Ihre nächste Anfrage.');
  }catch(err){bubble.textContent='Die lokale KI ist gerade nicht verfügbar. Prüfe die Internetverbindung und ob dein Browser WebGPU unterstützt.';status(err?.message||'KI nicht verfügbar.');}
  finally{sendBtn.disabled=false;input.focus()}
 });
