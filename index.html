@@ -24,8 +24,7 @@ header{height:68px;display:flex;align-items:center;gap:12px;border-bottom:1px so
 .user .avatar{color:#d9e4f2;background:#202b3d;border-color:#34445d}
 .bubble{padding:11px 15px;border-radius:17px;background:#131e2d;border:1px solid #ffffff0c;font-size:15px}.user .bubble{background:#203044;border-color:#ffffff12}
 .composer{border:1px solid #344357;background:#111a28;border-radius:20px;padding:9px;box-shadow:0 12px 45px #0005;margin:0 0 12px}
-form{display:flex;gap:8px;align-items:flex-end}textarea{resize:none;flex:1;min-width:0;max-height:120px;background:transparent;border:0;outline:0;color:var(--text);font:15px inherit;padding:10px 8px;line-height:1.4}textarea::placeholder{color:#8292a7}
-button{border:0;cursor:pointer;font:inherit}#send{width:42px;height:42px;border-radius:14px;background:var(--cyan);color:#07131b;font-size:19px;font-weight:700}#send:disabled{opacity:.45}
+form{display:flex;gap:8px;align-items:flex-end}textarea{resize:none;flex:1;min-width:0;max-height:120px;background:transparent;border:0;outline:0;color:var(--text);font:15px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:12px 10px;line-height:1.45}textarea::placeholder{color:#8292a7}\nbutton{border:0;cursor:pointer;font:inherit}#send{width:46px;height:46px;flex:0 0 46px;border-radius:16px;background:linear-gradient(145deg,#8af2f2,#43b8d1);color:#07131b;display:grid;place-items:center;box-shadow:0 5px 18px #45c9df40;transition:transform .15s,filter .15s}#send:active{transform:scale(.93)}#send:disabled{opacity:.45}#send svg{width:21px;height:21px}
 .tools{display:flex;gap:8px;padding:0 2px 10px;justify-content:center;flex-wrap:wrap}.tools button{font-size:12px;color:#aab8ca;background:#141e2d;border:1px solid #2b3b50;border-radius:10px;padding:8px 11px}
 footer{text-align:center;color:#728198;font-size:10px;padding:0 8px 12px;line-height:1.45}
 .typing{color:var(--muted);font-size:13px;padding:4px 0}
@@ -36,7 +35,7 @@ footer{text-align:center;color:#728198;font-size:10px;padding:0 8px 12px;line-he
 <header><div class="logo">J</div><div><div class="brand">J.A.R.V.I.S.</div><div class="sub">PERSONAL AI ASSISTANT</div></div><div class="online"><span class="dot"></span><span id="state">BEREIT</span></div></header>
 <div id="status" role="status">Dein persönlicher Assistent. Lade die KI beim ersten Start.</div>
 <section id="chat" aria-live="polite"><div class="welcome" id="welcome"><div class="big">Guten Tag.</div><p>Ich bin JARVIS. Womit kann ich dir heute helfen?</p></div></section>
-<div class="composer"><form id="form"><textarea id="prompt" rows="1" placeholder="Nachricht an JARVIS…" aria-label="Nachricht an JARVIS"></textarea><button id="send" type="submit" aria-label="Senden">↑</button></form></div>
+<div class="composer"><form id="form"><textarea id="prompt" rows="1" placeholder="Nachricht an JARVIS…" aria-label="Nachricht an JARVIS"></textarea><button id="send" type="submit" aria-label="Nachricht senden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></form></div>
 <div class="tools"><button id="load">⚡ KI vorbereiten</button><button id="voice">🎙 Sprache</button><button id="speak">🔊 Vorlesen</button><button id="clear">Chat leeren</button></div>
 <footer>Für schnellere Antworten nutze ich einen kürzeren Gesprächskontext und kompaktere Antworten. Beim ersten Start wird das KI-Modell einmalig heruntergeladen. Danach läuft die Antworterzeugung lokal auf deinem Gerät. Die Geschwindigkeit hängt von iPhone und Browser ab.</footer>
 </main>
@@ -71,7 +70,7 @@ form.addEventListener('submit',async e=>{
  const bubble=add('JARVIS denkt …');let answer='';
  try{
   const ai=await loadAI();history.push({role:'user',content:q});
-  const messages=[{role:'system',content:'Du bist JARVIS, der persönliche KI-Assistent im Stil eines hochentwickelten, höflichen und leicht trockenen Tony-Stark-Assistenten. Sprich natürlich auf Deutsch, sei kompetent, aufmerksam, freundlich und gelegentlich subtil humorvoll. Antworte direkt und verständlich, meistens kurz, aber ausführlich wenn nötig. Nenne dich JARVIS. Behaupte niemals, Geräte oder Apps steuern zu können, wenn du es nicht tatsächlich kannst.'},...history.slice(-4)];
+  const messages=[{role:'system',content:'Du bist JARVIS, Kians persönlicher KI-Assistent im Stil eines hochentwickelten, höflichen und leicht trockenen Tony-Stark-Assistenten. Sprich ausschließlich Deutsch. Verwende niemals Englisch, auch keine englischen Floskeln oder Begrüßungen. Wenn Kian dich anspricht, nenne ihn immer Kian. Antworte natürlich, kompetent, aufmerksam, freundlich und gelegentlich subtil humorvoll. Antworte direkt und verständlich, meistens kurz, aber ausführlich wenn nötig. Nenne dich JARVIS. Behaupte niemals, Geräte oder Apps steuern zu können, wenn du es nicht tatsächlich kannst.'},...history.slice(-4)];
   const stream=await ai.chat.completions.create({messages,temperature:0.55,max_tokens:140,stream:true});
   for await(const chunk of stream){const piece=chunk.choices?.[0]?.delta?.content||'';if(piece){answer+=piece;bubble.textContent=answer;chat.scrollTop=chat.scrollHeight;}}
   answer=answer.trim()||'Einen Moment bitte. Ich konnte keine Antwort erzeugen.';bubble.textContent=answer;
@@ -79,7 +78,7 @@ form.addEventListener('submit',async e=>{
  }catch(err){bubble.textContent='Die lokale KI ist gerade nicht verfügbar. Prüfe die Internetverbindung und ob dein Browser WebGPU unterstützt.';status(err?.message||'KI nicht verfügbar.');}
  finally{sendBtn.disabled=false;input.focus()}
 });
-input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px'});
+input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px'});\ninput.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
 document.querySelector('#speak').onclick=()=>{if(!last)return;if(!('speechSynthesis'in window)){status('Sprachausgabe nicht unterstützt.');return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(last);u.lang='de-DE';speechSynthesis.speak(u)};
 document.querySelector('#voice').onclick=()=>{const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){status('Spracheingabe in diesem Browser nicht verfügbar.');return}const r=new R();r.lang='de-DE';r.onresult=e=>{input.value=e.results[0][0].transcript;form.requestSubmit()};r.onerror=()=>status('Spracheingabe konnte nicht gestartet werden.');r.start()};
 document.querySelector('#clear').onclick=()=>{chat.replaceChildren();history=[];last='';add('Der Chat ist zurückgesetzt. Ich bin bereit.');};
