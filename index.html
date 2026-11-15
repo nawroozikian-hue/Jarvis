@@ -30,12 +30,26 @@ button{border:0;cursor:pointer;font:inherit}#send{width:46px;height:46px;flex:0 
 footer{text-align:center;color:#728198;font-size:10px;padding:0 8px 12px;line-height:1.45}
 .typing{color:var(--muted);font-size:13px;padding:4px 0}
 @media(min-width:700px){.app{padding-left:30px;padding-right:30px}#chat{padding-top:34px}.bubble{font-size:15.5px}}
+.reactor-stage{height:190px;flex:0 0 190px;display:grid;place-items:center;position:relative;overflow:hidden;margin:8px 0 0;background:radial-gradient(ellipse at center,#12364b55,transparent 65%)}
+.reactor{width:132px;height:132px;position:relative;display:grid;place-items:center;filter:drop-shadow(0 0 20px #54eaff55)}
+.reactor:before,.reactor:after{content:"";position:absolute;border:1px solid #6eeeff66;border-radius:50%;inset:0;box-shadow:0 0 16px #54eaff22,inset 0 0 16px #54eaff18}
+.reactor:before{inset:10px;border-style:dashed;animation:spin 22s linear infinite}
+.reactor:after{inset:-13px;border-color:#5bdcf044;border-left-color:#a2faff;animation:spin 12s linear infinite reverse}
+.core{width:62px;height:62px;border-radius:50%;background:radial-gradient(circle,#eaffff 0,#9cfaff 13%,#4ad5f2 34%,#137baf 61%,#0b2945 72%);box-shadow:0 0 12px #aafaff,0 0 32px #4ad5f2,0 0 65px #178dbb;animation:corebeat 3s ease-in-out infinite}
+.orbit{position:absolute;inset:-24px;border:1px solid #7ceeff33;border-radius:50%;transform:rotate(-28deg) scaleY(.42);box-shadow:0 0 15px #51dfff1c}
+.reactor-label{position:absolute;bottom:8px;font-size:9px;letter-spacing:3px;color:#8ccddd;text-shadow:0 0 12px #62d9e8}
+.hud-tick{position:absolute;width:5px;height:5px;background:#b7fbff;border-radius:50%;box-shadow:0 0 9px #5ceaff}
+.hud-tick.one{top:26px;left:calc(50% - 82px)}.hud-tick.two{top:50px;right:calc(50% - 91px)}.hud-tick.three{bottom:38px;left:calc(50% - 95px)}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes corebeat{0%,100%{transform:scale(.94);filter:brightness(.9)}50%{transform:scale(1.08);filter:brightness(1.25)}}
+@media(max-width:520px){.reactor-stage{height:155px;flex-basis:155px}.reactor{transform:scale(.86)}}
+@media(prefers-reduced-motion:reduce){.reactor:before,.reactor:after,.core{animation:none}}
 </style>
 </head>
 <body><main class="app">
 <header><div class="logo">J</div><div><div class="brand">J.A.R.V.I.S.</div><div class="sub">PERSONAL AI ASSISTANT</div></div><div class="online"><span class="dot"></span><span id="state">BEREIT</span></div></header>
-<div id="status" role="status">Dein persönlicher Assistent. Lade die KI beim ersten Start.</div>
-<section id="chat" aria-live="polite"><div class="welcome" id="welcome"><div class="big">Guten Tag, Kian.</div><p>Ich bin JARVIS. Womit kann ich dir heute helfen?</p></div></section>
+<div id="status" role="status">SYSTEM BEREITSTELLUNG · INITIALISIERUNG AUSSTEHEND</div>
+<div class="reactor-stage" aria-label="Animierter JARVIS-Reaktorkern"><span class="hud-tick one"></span><span class="hud-tick two"></span><span class="hud-tick three"></span><div class="reactor"><div class="orbit"></div><div class="core"></div></div><div class="reactor-label">J.A.R.V.I.S. · ONLINE SYSTEM</div></div>
+<section id="chat" aria-live="polite"><div class="welcome" id="welcome"><div class="big">Guten Tag, Kian.</div><p>Persönlicher KI-Assistent · Sprachsysteme bereit · Warte auf Eingabe.</p></div></section>
 <div class="composer"><form id="form"><textarea id="prompt" rows="1" placeholder="Nachricht an JARVIS…" aria-label="Nachricht an JARVIS"></textarea><button id="send" type="submit" aria-label="Nachricht senden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></form></div>
 <div class="tools"><button id="load">⚡ KI vorbereiten</button><button id="voice">🎙 Gespräch starten</button><button id="speak">🔊 Vorlesen</button><button id="clear">Chat leeren</button></div>
 <footer>Für schnellere Antworten nutze ich einen kürzeren Gesprächskontext und kompaktere Antworten. Beim ersten Start wird das KI-Modell einmalig heruntergeladen. Danach läuft die Antworterzeugung lokal auf deinem Gerät. Die Geschwindigkeit hängt von iPhone und Browser ab.</footer>
