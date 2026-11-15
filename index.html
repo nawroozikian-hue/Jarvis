@@ -38,7 +38,7 @@ footer{text-align:center;color:#728198;font-size:10px;padding:0 8px 12px;line-he
 <section id="chat" aria-live="polite"><div class="welcome" id="welcome"><div class="big">Guten Tag.</div><p>Ich bin JARVIS. Womit kann ich dir heute helfen?</p></div></section>
 <div class="composer"><form id="form"><textarea id="prompt" rows="1" placeholder="Nachricht an JARVIS…" aria-label="Nachricht an JARVIS"></textarea><button id="send" type="submit" aria-label="Senden">↑</button></form></div>
 <div class="tools"><button id="load">⚡ KI vorbereiten</button><button id="voice">🎙 Sprache</button><button id="speak">🔊 Vorlesen</button><button id="clear">Chat leeren</button></div>
-<footer>Beim ersten Start wird das KI-Modell einmalig heruntergeladen. Danach läuft die Antworterzeugung lokal auf deinem Gerät. Die Geschwindigkeit hängt von iPhone und Browser ab.</footer>
+<footer>Für schnellere Antworten nutze ich einen kürzeren Gesprächskontext und kompaktere Antworten. Beim ersten Start wird das KI-Modell einmalig heruntergeladen. Danach läuft die Antworterzeugung lokal auf deinem Gerät. Die Geschwindigkeit hängt von iPhone und Browser ab.</footer>
 </main>
 <script type="module">
 const chat=document.querySelector('#chat'),form=document.querySelector('#form'),input=document.querySelector('#prompt');
@@ -71,11 +71,11 @@ form.addEventListener('submit',async e=>{
  const bubble=add('JARVIS denkt …');let answer='';
  try{
   const ai=await loadAI();history.push({role:'user',content:q});
-  const messages=[{role:'system',content:'Du bist JARVIS, der persönliche KI-Assistent im Stil eines hochentwickelten, höflichen und leicht trockenen Tony-Stark-Assistenten. Sprich natürlich auf Deutsch, sei kompetent, aufmerksam, freundlich und gelegentlich subtil humorvoll. Antworte direkt und verständlich, meistens kurz, aber ausführlich wenn nötig. Nenne dich JARVIS. Behaupte niemals, Geräte oder Apps steuern zu können, wenn du es nicht tatsächlich kannst.'},...history.slice(-8)];
-  const stream=await ai.chat.completions.create({messages,temperature:0.65,max_tokens:220,stream:true});
+  const messages=[{role:'system',content:'Du bist JARVIS, der persönliche KI-Assistent im Stil eines hochentwickelten, höflichen und leicht trockenen Tony-Stark-Assistenten. Sprich natürlich auf Deutsch, sei kompetent, aufmerksam, freundlich und gelegentlich subtil humorvoll. Antworte direkt und verständlich, meistens kurz, aber ausführlich wenn nötig. Nenne dich JARVIS. Behaupte niemals, Geräte oder Apps steuern zu können, wenn du es nicht tatsächlich kannst.'},...history.slice(-4)];
+  const stream=await ai.chat.completions.create({messages,temperature:0.55,max_tokens:140,stream:true});
   for await(const chunk of stream){const piece=chunk.choices?.[0]?.delta?.content||'';if(piece){answer+=piece;bubble.textContent=answer;chat.scrollTop=chat.scrollHeight;}}
   answer=answer.trim()||'Einen Moment bitte. Ich konnte keine Antwort erzeugen.';bubble.textContent=answer;
-  history.push({role:'assistant',content:answer});history=history.slice(-10);last=answer;status('Bereit für Ihre nächste Anfrage.');
+  history.push({role:'assistant',content:answer});history=history.slice(-6);last=answer;status('Bereit für Ihre nächste Anfrage.');
  }catch(err){bubble.textContent='Die lokale KI ist gerade nicht verfügbar. Prüfe die Internetverbindung und ob dein Browser WebGPU unterstützt.';status(err?.message||'KI nicht verfügbar.');}
  finally{sendBtn.disabled=false;input.focus()}
 });
